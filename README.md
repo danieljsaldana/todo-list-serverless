@@ -10,7 +10,7 @@ Este repositorio consta de directorio separado para todas las operaciones de la 
 
 La idea del directorio `todos` es que en caso de que se quiera crear un servicio que contenga múltiples recursos, por ejemplo, usuarios, notas, comentarios, se podría hacer en el mismo servicio. Aunque esto es ciertamente posible, se podría considerar la creación de un servicio separado para cada recurso. Depende del caso de uso y de la preferencia del desarrollador.
 
-La estructura actual del repositorio sería la siguiente
+La estructura actual del repositorio sería la siguiente:
 
 
 ```
