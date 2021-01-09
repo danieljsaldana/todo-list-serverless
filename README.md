@@ -1,6 +1,6 @@
 
 # Serverless REST API
-
+ 
 Este ejemplo demuestra cómo configurar un [Servicios Web RESTful](https://en.wikipedia.org/wiki/Representational_state_transfer#Applied_to_web_services) que le permite crear, listar, obtener, actualizar y borrar listas de Tareas pendientes(ToDo). DynamoDB se utiliza para persistir los datos. 
 
 Este ejemplo está obtenido del [repositorio de ejemplos](https://github.com/serverless/examples/tree/master/aws-python-rest-api-with-dynamodb) de Serverless Framework. Debido a que el objetivo de la práctica es implementar una serie de Pipelines de CI/CD de diferente manera, el objetivo principal del alumno no será codificar desde cero un servicio. Por eso se ha elegido este caso que aunque no es excesivamente complejo, si representa un reto en determinados puntos, al ser un ecosistema al que probablemente el alumno no estará acostumbrado.
@@ -10,7 +10,7 @@ Este repositorio consta de directorio separado para todas las operaciones de la 
 
 La idea del directorio `todos` es que en caso de que se quiera crear un servicio que contenga múltiples recursos, por ejemplo, usuarios, notas, comentarios, se podría hacer en el mismo servicio. Aunque esto es ciertamente posible, se podría considerar la creación de un servicio separado para cada recurso. Depende del caso de uso y de la preferencia del desarrollador.
 
-La estructura actual del repositorio sería la siguiente
+La estructura actual del repositorio sería la siguiente:
 
 
 ```
