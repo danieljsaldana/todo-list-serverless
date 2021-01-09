@@ -1,11 +1,12 @@
-import logging
 import os
 import json
-
-from todos import decimalencoder
 import boto3
-dynamodb = boto3.resource('dynamodb')
+from todos import decimalencoder
 
+dynamodb = boto3.resource('dynamodb')
+translation = boto3.client('translate') 
+#boto3.client(service_name='translate', region_name='us-east-1', use_ssl=True)
+comprehend = boto3.client('comprehend') 
 
 def translate(event, context):
     table = dynamodb.Table(os.environ['DYNAMODB_TABLE'])
@@ -13,39 +14,41 @@ def translate(event, context):
     # fetch todo from the database
     result = table.get_item(
         Key={
-            'id': event['pathParameters']['id'],
+            'id': event['pathParameters']['id']
         }
     )
 
-    try:
-        item = result['Item']
+    #Recover text from table
+    textToTranslate = result['Item']['text']
 
-        # comprehend origin language
-        comprehend = boto3.client(service_name='comprehend',
-                                  region_name='us-east-1')
-        related = comprehend.detect_dominant_language(Text=item['text'])
+    #Recover text from path
+    targetLanguage = event['pathParameters']['language']
 
-        # translate result text
-        translate = boto3.client(service_name='translate',
-                                 region_name='us-east-1',
-                                 use_ssl=True)
+    #add translated text into item to be returned
+    result['Item']['text'] = translateText(textToTranslate, targetLanguage) #textTranslated.get('TranslatedText')
 
-        translation = translate.translate_text(
-            Text=item['text'],
-            SourceLanguageCode=related['Languages'][0]['LanguageCode'],
-            TargetLanguageCode=event['pathParameters']['lang'])
+    # create a response
+    response = {
+        "statusCode": 200,
+        "body": json.dumps(result['Item'],
+                           cls=decimalencoder.DecimalEncoder)
+    }
 
-        item['text'] = translation['TranslatedText']
-
-        # create a response
-        response = {
-            "statusCode": 200,
-            "body": json.dumps(item,
-                               cls=decimalencoder.DecimalEncoder)
-        }
-
-        return response
-
-    except Exception as e:
-        logging.error(str(e))
-        raise Exception("[ErrorMessage]: " + str(e))
+    return response
+    
+def translateText(textToTranslate, targetLanguage) :
+    textTranslated = textToTranslate
+    #detect main language stored
+    comprehendResponse = comprehend.detect_dominant_language(Text=textToTranslate) 
+        
+    if not textToTranslate:
+        print("Error text to translate is empty")
+    elif not comprehendResponse: 
+        print("Error recovering original language")            
+    else:
+        language = comprehendResponse['Languages'][0]['LanguageCode']
+        #text translation
+        traductioResult = translation.translate_text(Text = textToTranslate, SourceLanguageCode=language, TargetLanguageCode = targetLanguage)
+        textTranslated = traductioResult.get('TranslatedText')
+            
+    return textTranslated

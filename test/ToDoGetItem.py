@@ -2,6 +2,7 @@ from pprint import pprint
 import boto3
 from botocore.exceptions import ClientError
 
+#Test to check get item
 def get_todo(id, dynamodb=None):
     if not dynamodb:
         dynamodb = boto3.resource(
